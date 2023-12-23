@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   button: {
-    width: "25%",
+    width: "20%",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,

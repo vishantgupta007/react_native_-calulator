@@ -4,29 +4,29 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
-  StyleSheet,
 } from "react-native";
-import {styles} from "./style"
+import { styles } from "./style";
 import React, { useState } from "react";
+import { buttonsLayout } from "./data";
 
 const App = () => {
   // State to store the current input and result
-  const [input, setInput] = useState("");
-  const [result, setResult] = useState("");
-  const [memory, setMemory] = useState([]);
+  const [input, setInput] = useState(""); // for  addding input field
+  const [result, setResult] = useState(""); // for result display
+  const [history, setHistory] = useState([]); // for history display
+  const [memory, setMemory] = useState([]); // for storing value into memory
 
   // Function to handle button presses
   const handlePress = (value) => {
     if (value === "=") {
       try {
         // History feature
-
         const history = Number(eval(input)).toFixed(3).toString();
 
         const ans = Number(eval(input).toFixed(3)).toString();
         setResult(ans);
 
-        setMemory((prev) => [...prev, history]);
+        setHistory((prev) => [...prev, history]);
       } catch (error) {
         setResult("Error");
       }
@@ -40,37 +40,39 @@ const App = () => {
 
     // For all clear
     else if (value === "AC") {
-      setMemory([]);
+      setHistory([]);
       setInput("");
       setResult("");
+      setMemory([]);
     }
 
     // For delete value
     else if (value === "DL") {
       setInput(input.substring(0, input.length - 1));
-    } else {
-      setInput((prevInput) => prevInput + value);
     }
 
-    // Scientific function
-    switch (value) {
-      case "sqrt":
-        setInput(`Math.sqrt(${input})`);
-        break;
-
-      case "pow":
-        setInput(`Math.pow(${input}, 2)`);
-        break;
+    // for memory display
+    else if (value === "M+") {
+      setMemory((prev) => [...prev, input]);
+    } 
+    
+    else if (value === "MR") {
+      const lastMemoryValue = memory[memory.length - 1];
+      if (lastMemoryValue) {
+        setInput((prevInput) => prevInput + lastMemoryValue);
+      }
+    } 
+    
+    else if (value === "MC") {
+      setMemory([]);
+    }
+    
+    else {
+      setInput((prevInput) => prevInput + value);
     }
   };
 
-  const buttonsLayout = [
-    ["C", "DL", "%", "/"],
-    ["7", "8", "9", "*"],
-    ["4", "5", "6", "-"],
-    ["1", "2", "3", "+"],
-    ["AC", "0", ".", "="],
-  ];
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,7 +81,7 @@ const App = () => {
       <View style={styles.history}>
         {/* <Text style={styles.historyTitle}>History:</Text> */}
         <FlatList
-          data={memory}
+          data={history}
           keyExtractor={(index) => index.toString()}
           renderItem={({ item }) => (
             <Text style={styles.historyItem}>= {item}</Text>
@@ -120,4 +122,4 @@ export default App;
 
 // Styles
 
-// 
+//
